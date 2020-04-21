@@ -21,6 +21,9 @@ struct Diary{
 struct Diary diary[100];
 int n=0;
 int id;
+char titl[100];
+int count[100];
+int f;
 //create MenuDisplay
 void MenuDisplay();
 
@@ -63,7 +66,10 @@ bool checkEmptyString(int i);
 //Display information
 void displayInfo(int i);
 //Load diary id;
-bool loadID(int id,char titl[100]);
+bool loadID();
+void updateNote1();
+void deleteNote1();
+void updateTitle1();
 //show update
 void showUpdate(char titl[100]);
 int main(){
@@ -116,6 +122,81 @@ int main(){
 
     }
 }
+void deleteNote1(){
+
+     for (int i = 0; i < n; i++)
+        {
+          diary[i].id=i+1;
+        if (strcmp(diary[i].title,titl)==0)
+        {
+        	count[i]=diary[i].id;
+		  
+        }
+    }
+    for (int i = 0; i < n; i++)
+    {
+        if (id==count[i])
+        {
+            f=1;
+            strcpy(diary[i].title,"");
+            strcpy(diary[i].note,"");
+            printf("Note deleted.\n");
+        }    
+    }
+}
+void updateNote1(){
+    char buffer;
+    time_t t = time(NULL);
+    struct tm tm = *localtime(&t);
+    for (int i = 0; i < n; i++)
+    {
+        diary[i].id=i+1;
+        if (strcmp(diary[i].title,titl)==0)
+        {
+        	count[i]=diary[i].id;
+		  
+        }
+    }
+    for (int i = 0; i < n; i++)
+    {
+        if (id==count[i])
+        {
+            f=1;
+            scanf("%c",&buffer);
+            printf("\n\nNew Note:");
+            scanf("%[^\n]s",diary[i].note);
+            diary[i].dat.day=tm.tm_mday;
+            diary[i].dat.month=tm.tm_mon +1;
+            diary[i].dat.year=tm.tm_year+1900;
+            printf("Update note successful\n\n");
+        }
+    }
+}
+void updateTitle1(){
+    time_t t = time(NULL);
+    struct tm tm = *localtime(&t);
+        for (int i = 0; i < n; i++)
+        {
+            diary[i].id=i+1;
+        if (strcmp(diary[i].title,titl)==0)
+            {
+        	count[i]=diary[i].id;
+		  
+            }
+        }
+       for (int i = 0; i < n; i++){
+            if (id==count[i])
+            {
+                f=1;
+                printf("\n\nNew Title:");
+                scanf("%s",diary[i].title);
+                diary[i].dat.day=tm.tm_mday;
+                diary[i].dat.month=tm.tm_mon +1;
+                diary[i].dat.year=tm.tm_year+1900;
+                printf("Update title successful\n\n");
+            }
+        }
+}
 void showUpdate(char titl[100]){
     
     for (int i = 0; i < n; i++)
@@ -127,20 +208,23 @@ void showUpdate(char titl[100]){
         
     }
 }
-bool loadID(int id,char titl[100]){
+bool loadID(){
     for (int i = 0; i < n; i++)
     {
         diary[i].id=i+1;
         if (strcmp(diary[i].title,titl)==0)
         {
-        
-            if (id==diary[i].id)
-            {
-                return true;
-            }
+        	count[i]=diary[i].id;
+		  
         }
-        
-
+    }
+    for (int i=0; i<n;i++){
+	    if(count[i]==id)
+	    {
+		printf("%d",diary[i].id);
+        printf("%s",diary[i].note);
+		return true;
+	    }	
     }
   return false;
 }
@@ -326,10 +410,8 @@ void searchByTitleOrDate(){
 void updateTitle(){
     char title[100];
     int choice;
-    int f;
     char buffer;
-    time_t t = time(NULL);
-    struct tm tm = *localtime(&t);
+    f=0;
 
     while (1)
     {
@@ -349,36 +431,18 @@ void updateTitle(){
                 showUpdate(titl);
                 printf("No of diary update:");
                 scanf("%d",&id);
-                    if (loadID(id,titl)){
-                        f=1;
-                        printf("\n\nNew Title:");
-                        scanf("%s",diary[i].title);
-                        diary[i].dat.day=tm.tm_mday;
-                        diary[i].dat.month=tm.tm_mon +1;
-                        diary[i].dat.year=tm.tm_year+1900;
-                        printf("Update title successful\n\n");
-                        
-                    }
+                    updateTitle1();
                     break;
                 }
                
             }
+            
             else if (choice==2){
                 if (strcmp(diary[i].title,titl)==0){
                    showUpdate(titl);
                     printf("No to update note:");
                     scanf("%d",&id);
-                    if (loadID(id,titl)){
-                        f=1;
-                        scanf("%c",&buffer);
-                        printf("\n\nNew Note:");
-                        scanf("%[^\n]s",diary[i].note);
-                         diary[i].dat.day=tm.tm_mday;
-                        diary[i].dat.month=tm.tm_mon +1;
-                        diary[i].dat.year=tm.tm_year+1900;
-                        printf("Update note successful\n\n");
-                        
-                    }
+                    updateNote1();
                     break;
                 }
             }
@@ -386,6 +450,7 @@ void updateTitle(){
         }else if (choice==3){
             break;
         }
+
         if (f==0)
         {
             printf("Cant found!\n\n");
@@ -394,9 +459,8 @@ void updateTitle(){
 }
 //delete diary
 void deleteDiary(){
-    int f;
+    f=0;
     int choice;
-    int id;
     while (1)
     {
         showAllDiary();
@@ -412,7 +476,8 @@ void deleteDiary(){
         {
             
             break;
-        }printf("\t\tNo|Title|Date(day-month-year)|Note\n\n");
+        }
+        printf("\t\tNo|Title|Date(day-month-year)|Note\n\n");
     for (int i = 0; i <n; i++)
     {
         diary[i].id =i+1;
@@ -423,14 +488,8 @@ void deleteDiary(){
 
               printf("No to update note:");
                 scanf("%d",&id);
-                if (loadID(id,titl))
-                {
-                    f=1;
-                    strcpy(diary[i].title,"");
-                    strcpy(diary[i].note,"");
-                    printf("Note deleted.\n");
-                    
-                }
+                    deleteNote1();
+               
                 break;
             }
         }
